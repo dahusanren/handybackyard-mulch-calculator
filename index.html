@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mulch Calculator — Cubic Yards, Bags &amp; Depth</title>
+<meta name="description" content="Free mulch volume calculator: cubic yards, 2 cu ft and 3 cu ft bag counts, and coverage depth. Runs entirely in your browser — no signup, no tracking.">
+<style>
+  :root { color-scheme: light dark; --fg:#1b1b1b; --muted:#5a5a5a; --line:#d8d8d8; --card:#fff; --bg:#fbfaf7; --accent:#3f7d3f; }
+  @media (prefers-color-scheme: dark) { :root { --fg:#e8e8e8; --muted:#a5a5a5; --line:#3a3a3a; --card:#1e1e1e; --bg:#161616; --accent:#8fd18f; } }
+  * { box-sizing: border-box; }
+  body { margin:0; padding:1.6rem 1rem 3rem; background:var(--bg); color:var(--fg);
+         font:16px/1.65 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  main { max-width:44rem; margin:0 auto; }
+  h1 { font-size:1.6rem; line-height:1.25; margin:0 0 .5rem; }
+  p { margin:0 0 1rem; }
+  .sub { color:var(--muted); margin-bottom:1.4rem; }
+  .calc { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:1.2rem 1.3rem; margin:0 0 1.5rem; }
+  .calc label { display:block; font-size:.92rem; color:var(--muted); margin:.7rem 0 .25rem; }
+  .calc input { width:100%; padding:.55rem .65rem; font:inherit; color:var(--fg);
+                background:var(--bg); border:1px solid var(--line); border-radius:6px; }
+  .calc button { margin-top:1.1rem; padding:.6rem 1.3rem; font:inherit; font-weight:600; cursor:pointer;
+                 background:var(--accent); color:#fff; border:0; border-radius:6px; }
+  @media (prefers-color-scheme: dark) { .calc button { color:#16200f; } }
+  .calc button:focus-visible, .calc input:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+  .result { margin-top:1rem; padding:.85rem .95rem; border-radius:6px; background:var(--bg);
+            border:1px solid var(--line); font-weight:600; }
+  h2 { font-size:1.12rem; margin:2rem 0 .6rem; }
+  code { background:var(--card); border:1px solid var(--line); border-radius:4px; padding:.1rem .35rem; font-size:.92em; }
+  ul { padding-left:1.2rem; }
+  li { margin-bottom:.35rem; }
+  a { color:var(--accent); }
+  footer { margin-top:2.5rem; padding-top:1.2rem; border-top:1px solid var(--line); color:var(--muted); font-size:.9rem; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Mulch Calculator — Cubic Yards, Bags &amp; Depth</h1>
+  <p class="sub">Enter your bed length, width and mulch depth to get cubic yards for a bulk delivery, plus the exact number of bags to buy at the store.</p>
+
+  <div class="calc">
+    <label for="v-len">Length (feet)</label>
+    <input id="v-len" type="number" step="any" placeholder="e.g. 20">
+    <label for="v-wid">Width (feet)</label>
+    <input id="v-wid" type="number" step="any" placeholder="e.g. 10">
+    <label for="v-dep">Depth (inches)</label>
+    <input id="v-dep" type="number" step="any" placeholder="e.g. 3">
+    <button type="button" id="v-go">Calculate</button>
+    <div class="result" id="v-out" role="status" aria-live="polite"></div>
+  </div>
+
+  <h2>The arithmetic behind every answer</h2>
+  <p>Length, width and depth are the only three numbers the formula needs. Depth goes in inches, so it is divided by 12 before it can be multiplied by anything else.</p>
+  <ul>
+    <li>Cubic feet = length (ft) &times; width (ft) &times; depth (in) &divide; 12</li>
+    <li>Cubic yards = cubic feet &divide; 27</li>
+    <li>Bags of 2 cu ft = cubic feet &divide; 2, then rounded <strong>up</strong> to a whole bag</li>
+  </ul>
+  <p>Nothing rounds down, because running short partway along a border is the expensive outcome, not the one spare bag left in the garage. Add roughly 10% for waste.</p>
+
+  <h2>Worked example: a 20 ft &times; 10 ft bed at 3 inches</h2>
+  <p>Twenty feet by ten feet is 200 square feet of planting space. At three inches deep the arithmetic is 20 &times; 10 &times; 3 &divide; 12 = <strong>50 cubic feet</strong>. Divide 50 by 27 and you get <strong>1.85 cubic yards</strong>, which is what goes on a bulk order. Divide 50 by 2 and you get <strong>25 bags</strong> of 2 cu ft mulch; if the pallet only carries the larger bags, 50 &divide; 3 = 16.67, so you buy <strong>17 bags</strong> of 3 cu ft.</p>
+
+  <h2>Depth guidance</h2>
+  <p>Extension services commonly advise no more than 2 to 3 inches of fine-textured mulch such as compost and bark on beds, and shallower depths for mulch around trees and shrubs, where a thick layer can hold moisture against the trunk. Check the local guidance before you pick a depth.</p>
+
+  <h2>Sources</h2>
+  <ul>
+    <li><a href="https://hgic.clemson.edu/factsheet/mulch/" rel="noopener">Clemson Cooperative Extension — Mulch</a></li>
+    <li><a href="https://extension.umd.edu/resource/mulching-trees-and-shrubs/" rel="noopener">University of Maryland Extension — Mulching Trees and Shrubs</a></li>
+  </ul>
+
+  <footer>
+    <p>Released under the MIT License. This calculator is a standalone copy of the tool at <a href="https://handybackyard.com/mulch-calculator" rel="noopener">handybackyard.com/mulch-calculator</a>, where the same arithmetic runs alongside the site's other garden calculators. Everything here runs locally in your browser — no account, no server, no tracking.</p>
+  </footer>
+</main>
+
+<script>
+(function () {
+  const L = document.getElementById('v-len');
+  const W = document.getElementById('v-wid');
+  const D = document.getElementById('v-dep');
+  const out = document.getElementById('v-out');
+  const fmt = (n, d = 2) => (Math.round(n * 10 ** d) / 10 ** d).toLocaleString('en-US');
+
+  function run() {
+    const l = parseFloat(L.value), w = parseFloat(W.value), dp = parseFloat(D.value);
+    if (!(l > 0) || !(w > 0) || !(dp > 0)) { out.textContent = 'Fill in length, width and depth.'; return; }
+    const cuft = l * w * (dp / 12);
+    const yards = cuft / 27;
+    out.textContent = [
+      fmt(cuft) + ' cu ft',
+      fmt(yards) + ' cubic yards',
+      '≈ ' + Math.ceil(cuft / 2).toLocaleString('en-US') + ' 2-cu-ft bags',
+      '≈ ' + Math.ceil(cuft / 3).toLocaleString('en-US') + ' 3-cu-ft bags'
+    ].join(' · ') + ' (add ~10% for waste)';
+  }
+  document.getElementById('v-go').addEventListener('click', run);
+  document.addEventListener('keydown', function (e) { if (e.key === 'Enter') run(); });
+})();
+</script>
+</body>
+</html>
